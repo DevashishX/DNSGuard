@@ -7,7 +7,7 @@ def UDP_server(ip, port):
     sock.bind((ip, port))
     data = None
     addr = None
-
+    print("DNS UDP SERVER ACTIVE ON {}:{}", port, ip)
     while True:
         data, addr = sock.recvfrom(octetsize)
         print("Addr:\n{}\nData:\n{}\n".format(addr, data))
