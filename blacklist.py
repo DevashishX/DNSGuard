@@ -1,14 +1,24 @@
-import re
 import json
+import pyinotify
+import threading
 
-class Blacklist():
+class Blacklist(pyinotify.ProcessEvent):
 
     def __init__(self, filename="blacklist.txt"):
         self.blacklist = []
+        self.filename = filename
         self.blacklist = self.read(filename)
+        self.lock = threading.Lock()
+        wm = pyinotify.WatchManager()
+        wm.add_watch('./blacklist.txt', pyinotify.IN_MODIFY, rec=True)
+        handler = self
+        notifier = pyinotify.ThreadedNotifier(wm, handler)
+        notifier.start()
+        print("Hello")
         pass
 
     def read(self, filename="blacklist.txt"):
+        print("data refresh")
         data = self.blacklist
         try:
             with open(filename, "r") as fp:
@@ -19,6 +29,13 @@ class Blacklist():
             data = self.blacklist
         return data
         pass
+    
+    def process_IN_MODIFY(self, event):
+        print ("MODIFY event:", event.pathname)
+        self.lock.acquire()
+        self.blacklist = self.read(self.filename)
+        self.lock.release()
+
 
     def simplesearch(self, keyword):
         for pattern in self.blacklist:

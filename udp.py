@@ -41,6 +41,7 @@ def DNSGuard(ip, port, blacklist):
         fqdn = FQDN(question)
         if allowed(fqdn, blacklist):
             zones = R.resolveZone([fqdn])
+            print(zones)
             reply = packet.reply()
             for zone in zones:
                 reply.add_answer(*RR.fromZone(zone))
