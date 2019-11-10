@@ -5,9 +5,26 @@ A DNS server which runs on localhost to block Advertisements and Malicious Websi
 Blacklist gets reloaded into the application at runtime when it is modified
 old blacklist is used if there are any problems in the new blacklist
 
+# How to install?
+run ```sudo ./install.sh``` to install required python3 libraries
+
+
+# How to Check?
+
+## For Browser Testing
+Search up how to change the DNS of your respective operating system on internet and set the DNS (IPV4) address to 127.0.0.1
+and start the server on command line or using daemons such as runit or monit
+
+## Using Dig utility on linux terminal
+$ dig www.example.com @127.0.0.1
+
+The websites which are blocked will not receive a response / will be timed out
+
 # USAGE
 
-usage: udp.py [-h] [-ip IP] [-p PORT] [-bl BLACKLIST]
+```DNSGuard.py -h```
+
+usage: DNSGuard.py [-h] [-ip IP] [-p PORT] [-bl BLACKLIST]
 
 optional arguments:
   -h, --help            show this help message and exit
