@@ -24,7 +24,7 @@ The websites which are blocked will not receive a response / will be timed out
 
 # USAGE
 
-```sudo python3 DNSGuard.py -h```
+```sudo python3 DNSGuard.py```
 
 usage: DNSGuard.py [-h] [-ip IP] [-p PORT] [-bl BLACKLIST]
 
