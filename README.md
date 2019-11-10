@@ -5,7 +5,7 @@ A DNS server which runs on localhost to block Advertisements and Malicious Websi
 Blacklist gets reloaded into the application at runtime when it is modified
 old blacklist is used if there are any problems in the new blacklist
 
-#USAGE
+# USAGE
 
 usage: udp.py [-h] [-ip IP] [-p PORT] [-bl BLACKLIST]
 
