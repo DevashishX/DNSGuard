@@ -69,7 +69,7 @@ if __name__ == "__main__":
         port = args.port
 
     if args.blacklist == None:
-        blackfile = "blacklist.json"
+        blackfile = "blacklist.txt"
     else:
         blackfile = args.blacklist
 
