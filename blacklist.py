@@ -1,6 +1,7 @@
-import json
 import pyinotify
 import threading
+
+import logging
 
 class Blacklist(pyinotify.ProcessEvent):
 
@@ -14,24 +15,24 @@ class Blacklist(pyinotify.ProcessEvent):
         handler = self
         notifier = pyinotify.ThreadedNotifier(wm, handler)
         notifier.start()
-        print("Hello")
+        logging.debug("Blacklist initialized")
         pass
 
     def read(self, filename="blacklist.txt"):
-        print("data refresh")
+        logging.debug("Blacklist Data Refresh")
         data = self.blacklist
         try:
             with open(filename, "r") as fp:
                 data = fp.read().split("\n")
                 data = sorted(data, key=len, reverse = True)
         except Exception as E:
-            print("Error: {}\nUsing the old data".format(E))
+            logging.error("Error: {}\nUsing the old data".format(E))
             data = self.blacklist
         return data
         pass
     
     def process_IN_MODIFY(self, event):
-        print ("MODIFY event:", event.pathname)
+        logging.debug("Blacklist MODIFY event:", event.pathname)
         self.lock.acquire()
         self.blacklist = self.read(self.filename)
         self.lock.release()
@@ -39,7 +40,7 @@ class Blacklist(pyinotify.ProcessEvent):
 
     def simplesearch(self, keyword):
         for pattern in self.blacklist:
-            print("pattern: {} entry: {}".format(pattern, keyword))
+            logging.debug("pattern: {} entry: {}".format(pattern, keyword))
             flag = keyword.find(pattern)
             if flag != -1:
                 return True
@@ -49,6 +50,7 @@ class Blacklist(pyinotify.ProcessEvent):
         keysplit = keyword.split(".")
         klen = len(keysplit)
         ngram = {}
+        result = False
         for l in range(1, klen+1):
             ngram[l] = self.ngrams(keysplit, l)
         for pattern in self.blacklist:
@@ -56,8 +58,12 @@ class Blacklist(pyinotify.ProcessEvent):
             if plen > klen:
                 continue
             if pattern in ngram[plen]:
-                return True
-        return False
+                result = True
+                logging.debug("{} was found in list? : {}".format(keyword, result))
+                return result
+        result = False
+        logging.debug("{} was found in blacklist? : {}".format(keyword, result))
+        return result
 
     def ngrams(self, input, n):
         # input = input.split('.')
@@ -72,6 +78,6 @@ class Blacklist(pyinotify.ProcessEvent):
 
 if __name__ == "__main__":
     B = Blacklist()
-    print(B)
-    print(B.search("reddit.com"))
+    logging.debug(B)
+    logging.debug(B.search("reddit.com"))
     pass

@@ -1,6 +1,6 @@
 import dns.resolver
-from pprint import pprint
-print = pprint
+
+import logging
 
 class Resolver():
 

@@ -4,11 +4,16 @@ from dnslib import DNSRecord
 from dnslib import RR
 import dns.resolver
 from urllib.parse import urlparse
+import argparse
+
 import resolver
 import blacklist
-import argparse
-from pprint import pprint
-print = pprint
+
+
+import logging
+import logging.config
+
+logging.config.fileConfig('logging.conf')
 
 def FQDN(question):
     qname = str(question.get_qname())
@@ -33,19 +38,23 @@ def DNSGuard(ip, port, blacklist):
     data = None
     addr = None
     R = resolver.Resolver()
-    print("DNSGuard SERVER ACTIVE ON {}:{}".format(ip, port))
+    logging.debug("DNSGuard SERVER ACTIVE ON {}:{}".format(ip, port))
     while True:
         data, addr = sock.recvfrom(octetsize)
         packet = DNSRecord.parse(data)
         question = packet.get_q()
         fqdn = FQDN(question)
+        logging.debug("Query: {}".format(str(packet)))
         if allowed(fqdn, blacklist):
-            zones = R.resolveZone([fqdn])
-            print(zones)
-            reply = packet.reply()
-            for zone in zones:
-                reply.add_answer(*RR.fromZone(zone))
-                sock.sendto(DNSRecord.pack(reply), addr)
+            try:
+                zones = R.resolveZone([fqdn])
+                logging.debug("Allowed: {}", zones)
+                reply = packet.reply()
+                for zone in zones:
+                    reply.add_answer(*RR.fromZone(zone))
+                    sock.sendto(DNSRecord.pack(reply), addr)
+            except Exception as e:
+                logging.error("Error: {}".format(e))
             pass
     pass
 
