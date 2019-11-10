@@ -59,7 +59,7 @@ class Blacklist(pyinotify.ProcessEvent):
                 continue
             if pattern in ngram[plen]:
                 result = True
-                logging.debug("{} was found in list? : {}".format(keyword, result))
+                logging.debug("{} was found in blacklist? : {}".format(keyword, result))
                 return result
         result = False
         logging.debug("{} was found in blacklist? : {}".format(keyword, result))
