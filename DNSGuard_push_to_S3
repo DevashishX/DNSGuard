@@ -1,0 +1,14 @@
+/home/ec2-user/DNSGuard/DNSGuard.log {
+	hourly
+#	missingok
+	copytruncate
+	rotate 0
+	size 1M
+#	compress
+#	delaycompress
+	notifempty
+#	sharedscripts
+	postrotate
+		sudo /usr/bin/bash /home/ec2-user/DNSGuard/DNSGuard_upload_log_to_S3.sh
+	endscript
+}
